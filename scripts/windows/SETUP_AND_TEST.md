@@ -7,6 +7,13 @@
 - PowerShell
 - Enough free disk space for `llama.cpp` build files and the GGUF model
 
+## Where to get the prerequisites
+
+- `winget`: Microsoft documents it here: <https://learn.microsoft.com/en-us/windows/package-manager/winget/>
+  On current Windows 10 and Windows 11 systems, `winget` is typically provided through App Installer.
+- Visual Studio Build Tools: download from Microsoft's official Visual Studio downloads page here: <https://visualstudio.microsoft.com/downloads/>
+  On that page, look for `Build Tools for Visual Studio` and install the Desktop C++ workload.
+
 ## Install requirements
 
 Run this first in PowerShell:
