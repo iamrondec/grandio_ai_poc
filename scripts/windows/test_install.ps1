@@ -1,0 +1,37 @@
+$ErrorActionPreference = "Stop"
+
+$RootDir = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+$VenvDir = if ($env:VENV_DIR) { $env:VENV_DIR } else { Join-Path $RootDir ".venv" }
+$LlamaCppDir = if ($env:LLAMA_CPP_DIR) { $env:LLAMA_CPP_DIR } else { Join-Path $RootDir "vendor\llama.cpp" }
+$ModelDir = if ($env:MODEL_DIR) { $env:MODEL_DIR } else { Join-Path $RootDir "models" }
+$ModelFile = if ($env:MODEL_FILE) { $env:MODEL_FILE } else { "Qwen2.5-7B-Instruct-Q4_K_S.gguf" }
+$VenvPython = Join-Path $VenvDir "Scripts\python.exe"
+$HfCli = Join-Path $VenvDir "Scripts\huggingface-cli.exe"
+$LlamaCli = Join-Path $LlamaCppDir "build\bin\Release\llama-cli.exe"
+$LlamaServer = Join-Path $LlamaCppDir "build\bin\Release\llama-server.exe"
+$ModelPath = Join-Path $ModelDir $ModelFile
+
+function Fail([string]$Message) {
+    throw "[test] $Message"
+}
+
+Write-Host "[test] Checking virtualenv..."
+if (-not (Test-Path $VenvPython)) { Fail "Missing virtualenv Python at $VenvPython" }
+
+Write-Host "[test] Checking huggingface-cli..."
+if (-not (Test-Path $HfCli)) { Fail "Missing huggingface-cli at $HfCli" }
+
+Write-Host "[test] Checking llama.cpp build..."
+if (-not (Test-Path $LlamaCli)) { Fail "Missing llama-cli at $LlamaCli" }
+if (-not (Test-Path $LlamaServer)) { Fail "Missing llama-server at $LlamaServer" }
+
+Write-Host "[test] Checking model file..."
+if (-not (Test-Path $ModelPath)) { Fail "Missing model file at $ModelPath" }
+
+Write-Host "[test] Verifying llama-cli responds..."
+& $LlamaCli --help | Out-Null
+
+Write-Host ""
+Write-Host "[test] All checks passed."
+Write-Host "[test] Launch with: $RootDir\scripts\windows\run_qwen.ps1"
+Write-Host "[test] Web UI with: $RootDir\scripts\windows\run_qwen_server.ps1"
