@@ -23,6 +23,11 @@ function Install-Package([string]$Id) {
     winget install @WingetArgs --id $Id
 }
 
+function Is-Truthy([string]$Value) {
+    if (-not $Value) { return $false }
+    return $Value.ToLowerInvariant() -in @("1", "true", "yes", "on")
+}
+
 Require-Cmd winget
 
 Log "Installing Git"
@@ -41,6 +46,14 @@ Log "Installing Visual Studio Build Tools with the Desktop C++ workload"
 winget install @WingetArgs `
     --id "Microsoft.VisualStudio.2022.BuildTools" `
     --override "--passive --wait --norestart --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+
+if (Is-Truthy $env:SKIP_NVIDIA_CUDA) {
+    Log "Skipping NVIDIA CUDA Toolkit"
+    Write-Host "SKIP_NVIDIA_CUDA=1 was set, so this machine will use CPU-only builds unless CUDA is installed later."
+} else {
+    Log "Installing NVIDIA CUDA Toolkit"
+    Install-Package "Nvidia.CUDA"
+}
 
 Log "Requirements install complete"
 Write-Host "If this is a new machine setup, open a fresh terminal before running make."

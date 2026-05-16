@@ -7,6 +7,7 @@ $LlamaCppDir = if ($env:LLAMA_CPP_DIR) { $env:LLAMA_CPP_DIR } else { Join-Path $
 $ModelDir = if ($env:MODEL_DIR) { $env:MODEL_DIR } else { Join-Path $RootDir "models" }
 $ModelRepo = if ($env:MODEL_REPO) { $env:MODEL_REPO } else { "bartowski/Qwen2.5-7B-Instruct-GGUF" }
 $ModelFile = if ($env:MODEL_FILE) { $env:MODEL_FILE } else { "Qwen2.5-7B-Instruct-Q4_K_S.gguf" }
+$LlamaBackend = if ($env:LLAMA_BACKEND) { $env:LLAMA_BACKEND.ToLowerInvariant() } else { "auto" }
 
 function Log([string]$Message) {
     Write-Host ""
@@ -17,6 +18,14 @@ function Require-Cmd([string]$Name) {
     if (-not (Get-Command $Name -ErrorAction SilentlyContinue)) {
         throw "Missing required command: $Name"
     }
+}
+
+function Has-CudaToolkit {
+    if (Get-Command nvcc -ErrorAction SilentlyContinue) {
+        return $true
+    }
+
+    return -not [string]::IsNullOrWhiteSpace($env:CUDA_PATH)
 }
 
 Require-Cmd git
@@ -51,7 +60,34 @@ if (-not (Test-Path (Join-Path $LlamaCppDir ".git"))) {
 Push-Location $LlamaCppDir
 try {
     Log "Building llama.cpp"
-    cmake -B build
+    $CmakeArgs = @("-B", "build")
+    $SelectedBackend = "cpu"
+
+    switch ($LlamaBackend) {
+        "cuda" {
+            if (-not (Has-CudaToolkit)) {
+                throw "LLAMA_BACKEND=cuda was requested, but the CUDA toolkit was not detected. Install it first and reopen PowerShell."
+            }
+
+            $CmakeArgs += "-DGGML_CUDA=ON"
+            $SelectedBackend = "cuda"
+        }
+        "cpu" {
+            $SelectedBackend = "cpu"
+        }
+        "auto" {
+            if (Has-CudaToolkit) {
+                $CmakeArgs += "-DGGML_CUDA=ON"
+                $SelectedBackend = "cuda"
+            }
+        }
+        default {
+            throw "Unsupported LLAMA_BACKEND value: $LlamaBackend. Use auto, cpu, or cuda."
+        }
+    }
+
+    Log "Selected backend: $SelectedBackend"
+    cmake @CmakeArgs
     cmake --build build --config Release
 } finally {
     Pop-Location
