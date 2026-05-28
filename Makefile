@@ -2,21 +2,33 @@ ifeq ($(OS),Windows_NT)
 PLATFORM := windows
 else
 SHELL := /bin/bash
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
 PLATFORM := macos
+else ifeq ($(UNAME_S),Linux)
+PLATFORM := ubuntu
+else
+$(error Unsupported platform: $(UNAME_S))
+endif
 endif
 
-.PHONY: help setup test run serve setup-macos test-macos run-macos serve-macos install-windows-requirements setup-windows test-windows run-windows serve-windows clean
+.PHONY: help setup test run serve setup-macos test-macos run-macos serve-macos install-ubuntu-requirements setup-ubuntu test-ubuntu run-ubuntu serve-ubuntu install-windows-requirements setup-windows test-windows run-windows serve-windows clean
 
 help:
 	@echo Available targets:
-	@echo   make setup                       # auto-detects macOS or Windows
-	@echo   make test                        # auto-detects macOS or Windows
-	@echo   make run                         # auto-detects macOS or Windows
-	@echo   make serve                       # auto-detects macOS or Windows
+	@echo   make setup                       # auto-detects macOS, Ubuntu, or Windows
+	@echo   make test                        # auto-detects macOS, Ubuntu, or Windows
+	@echo   make run                         # auto-detects macOS, Ubuntu, or Windows
+	@echo   make serve                       # auto-detects macOS, Ubuntu, or Windows
 	@echo   make setup-macos
 	@echo   make test-macos
 	@echo   make run-macos
 	@echo   make serve-macos
+	@echo   make install-ubuntu-requirements
+	@echo   make setup-ubuntu
+	@echo   make test-ubuntu
+	@echo   make run-ubuntu
+	@echo   make serve-ubuntu
 	@echo   make install-windows-requirements
 	@echo   make setup-windows
 	@echo   make test-windows
@@ -47,6 +59,21 @@ run-macos:
 
 serve-macos:
 	./scripts/macos/run_qwen_server.sh
+
+install-ubuntu-requirements:
+	./scripts/ubuntu/install_requirements.sh
+
+setup-ubuntu:
+	./scripts/ubuntu/setup_llama_cpp_qwen.sh
+
+test-ubuntu:
+	./scripts/ubuntu/test_install.sh
+
+run-ubuntu:
+	./scripts/ubuntu/run_qwen.sh
+
+serve-ubuntu:
+	./scripts/ubuntu/run_qwen_server.sh
 
 install-windows-requirements:
 	powershell -ExecutionPolicy Bypass -File .\scripts\windows\install_requirements.ps1

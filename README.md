@@ -1,6 +1,6 @@
 # Local Qwen 7B with llama.cpp
 
-This project sets up a local `llama.cpp` environment, downloads a Qwen 7B GGUF model, and runs it from the terminal on macOS or Windows.
+This project sets up a local `llama.cpp` environment, downloads a Qwen 7B GGUF model, and runs it from the terminal on macOS, Ubuntu, or Windows.
 
 ## What it does
 
@@ -9,7 +9,7 @@ This project sets up a local `llama.cpp` environment, downloads a Qwen 7B GGUF m
 - Clones and builds `llama.cpp`
 - Downloads a default Qwen 7B GGUF model
 - Runs Qwen in terminal mode or local web server mode
-- Provides separate scripts and docs for macOS and Windows
+- Provides separate scripts and docs for macOS, Ubuntu, and Windows
 
 ## Quick start
 
@@ -17,6 +17,16 @@ macOS:
 
 ```bash
 make setup
+make test
+make run
+make serve
+```
+
+Ubuntu:
+
+```bash
+make install-ubuntu-requirements
+LLAMA_BACKEND=cuda make setup
 make test
 make run
 make serve
@@ -32,7 +42,7 @@ make run
 make serve
 ```
 
-On Windows, `make setup`, `make test`, and `make run` now auto-select the Windows PowerShell scripts. On macOS, those same targets auto-select the shell scripts.
+On Windows, `make setup`, `make test`, and `make run` auto-select the PowerShell scripts. On macOS and Ubuntu, those same targets auto-select the matching shell scripts for the current platform.
 
 ## Default model
 
@@ -62,6 +72,13 @@ make setup
     │   ├── run_qwen_server.sh
     │   ├── setup_llama_cpp_qwen.sh
     │   └── test_install.sh
+    ├── ubuntu/
+    │   ├── SETUP_AND_TEST.md
+    │   ├── install_requirements.sh
+    │   ├── run_qwen.sh
+    │   ├── run_qwen_server.sh
+    │   ├── setup_llama_cpp_qwen.sh
+    │   └── test_install.sh
     └── windows/
         ├── SETUP_AND_TEST.md
         ├── install_requirements.ps1
@@ -73,4 +90,4 @@ make setup
 
 ## More detail
 
-See [scripts/macos/SETUP_AND_TEST.md](/Users/admin/grandio/grandio_ai_poc/scripts/macos/SETUP_AND_TEST.md) and [scripts/windows/SETUP_AND_TEST.md](/Users/admin/grandio/grandio_ai_poc/scripts/windows/SETUP_AND_TEST.md) for setup notes, requirements, and troubleshooting.
+See [scripts/macos/SETUP_AND_TEST.md](/Users/admin/grandio/grandio_ai_poc/scripts/macos/SETUP_AND_TEST.md), [scripts/ubuntu/SETUP_AND_TEST.md](/Users/admin/grandio/grandio_ai_poc/scripts/ubuntu/SETUP_AND_TEST.md), and [scripts/windows/SETUP_AND_TEST.md](/Users/admin/grandio/grandio_ai_poc/scripts/windows/SETUP_AND_TEST.md) for setup notes, requirements, and troubleshooting.
