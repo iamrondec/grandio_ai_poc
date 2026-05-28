@@ -44,7 +44,7 @@ make serve
 
 On Windows, `make setup`, `make test`, and `make run` auto-select the PowerShell scripts. On macOS and Ubuntu, those same targets auto-select the matching shell scripts for the current platform.
 
-`make serve` will also load a default system prompt from `prompts/system_prompt.txt` when that file exists. You can override it with `SYSTEM_PROMPT_FILE=/path/to/file`.
+On newer `llama.cpp` builds, `make serve` will also load a default system prompt from `prompts/system_prompt.txt` when that file exists. You can override it with `SYSTEM_PROMPT_FILE=/path/to/file`.
 
 ## Default model
 

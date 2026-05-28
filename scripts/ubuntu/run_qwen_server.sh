@@ -15,6 +15,10 @@ MODEL_PATH="$MODEL_DIR/$MODEL_FILE"
 LLAMA_SERVER="$LLAMA_CPP_DIR/build/bin/llama-server"
 SERVER_ARGS=()
 
+supports_system_prompt_file() {
+  "$LLAMA_SERVER" --help 2>&1 | grep -q -- '--system-prompt-file'
+}
+
 if [[ ! -x "$LLAMA_SERVER" ]]; then
   printf 'llama-server not found at %s\n' "$LLAMA_SERVER" >&2
   printf 'Run ./scripts/ubuntu/setup_llama_cpp_qwen.sh first.\n' >&2
@@ -27,7 +31,7 @@ if [[ ! -f "$MODEL_PATH" ]]; then
   exit 1
 fi
 
-if [[ -f "$SYSTEM_PROMPT_FILE" ]]; then
+if [[ -f "$SYSTEM_PROMPT_FILE" ]] && supports_system_prompt_file; then
   SERVER_ARGS+=(--system-prompt-file "$SYSTEM_PROMPT_FILE")
 fi
 

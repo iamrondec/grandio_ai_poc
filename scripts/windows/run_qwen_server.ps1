@@ -15,6 +15,7 @@ $Port = if ($env:PORT) { $env:PORT } else { "8080" }
 $ModelPath = Join-Path $ModelDir $ModelFile
 $LlamaServer = Join-Path $LlamaCppDir "build\bin\Release\llama-server.exe"
 $ServerArgs = @()
+$SupportsSystemPromptFile = $false
 
 if (-not (Test-Path $LlamaServer)) {
     throw "llama-server not found at $LlamaServer. Run .\scripts\windows\setup_llama_cpp_qwen.ps1 first."
@@ -24,7 +25,14 @@ if (-not (Test-Path $ModelPath)) {
     throw "Model file not found at $ModelPath. Run .\scripts\windows\setup_llama_cpp_qwen.ps1 first."
 }
 
-if (Test-Path $SystemPromptFile) {
+try {
+    $HelpText = & $LlamaServer --help 2>&1 | Out-String
+    $SupportsSystemPromptFile = $HelpText -match "--system-prompt-file"
+} catch {
+    $SupportsSystemPromptFile = $false
+}
+
+if ((Test-Path $SystemPromptFile) -and $SupportsSystemPromptFile) {
     $ServerArgs += @("--system-prompt-file", $SystemPromptFile)
 }
 
