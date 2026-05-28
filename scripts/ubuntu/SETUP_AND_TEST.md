@@ -147,6 +147,12 @@ Then open:
 http://127.0.0.1:8080
 ```
 
+By default, `make serve` loads a system prompt from `prompts/system_prompt.txt` if that file exists. Override it with:
+
+```bash
+SYSTEM_PROMPT_FILE="/absolute/path/to/your_prompt.txt" make serve
+```
+
 If you need remote access from another machine on your network:
 
 ```bash
@@ -200,5 +206,26 @@ If `cmake` or compiler tools are missing, rerun `make install-ubuntu-requirement
 If you have an NVIDIA GPU but setup still reports a CPU build, confirm `nvcc --version` works in the same shell where you run `make setup`.
 
 If `nvidia-smi` works but `nvcc` does not, the NVIDIA driver is installed but the CUDA toolkit is still missing.
+
+If setup fails with `nvcc fatal : Unsupported gpu architecture 'compute_120a'`, your CUDA toolkit is older than the architecture that `llama.cpp` auto-detected for the GPU. NVIDIA's Blackwell compatibility guide says older toolkits can still work if the build includes forward-compatible PTX, and `llama.cpp` also supports manually overriding CUDA architectures through CMake.
+
+Try:
+
+```bash
+cd ~/grandio/grandio_ai_poc
+rm -rf vendor/llama.cpp/build
+CMAKE_CUDA_ARCHITECTURES=90 LLAMA_BACKEND=cuda make setup
+```
+
+If that still fails, the better fix is to upgrade to a newer CUDA toolkit. Also check:
+
+```bash
+nvcc --version
+```
+
+References:
+
+- `llama.cpp` CUDA build docs: <https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md>
+- NVIDIA Blackwell compatibility guide: <https://docs.nvidia.com/cuda/blackwell-compatibility-guide/>
 
 If you expose the server on `0.0.0.0`, make sure your firewall allows the selected port.

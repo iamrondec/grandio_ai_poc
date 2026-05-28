@@ -9,6 +9,7 @@ MODEL_DIR="${MODEL_DIR:-$ROOT_DIR/models}"
 MODEL_REPO="${MODEL_REPO:-bartowski/Qwen2.5-7B-Instruct-GGUF}"
 MODEL_FILE="${MODEL_FILE:-Qwen2.5-7B-Instruct-Q4_K_S.gguf}"
 LLAMA_BACKEND="${LLAMA_BACKEND:-auto}"
+CMAKE_CUDA_ARCHITECTURES_VALUE="${CMAKE_CUDA_ARCHITECTURES:-}"
 
 log() {
   printf '\n[%s] %s\n' "setup" "$1"
@@ -35,6 +36,9 @@ build_llama_cpp() {
     cuda)
       log "Building llama.cpp with CUDA enabled"
       cmake_args+=(-DGGML_CUDA=ON)
+      if [[ -n "$CMAKE_CUDA_ARCHITECTURES_VALUE" ]]; then
+        cmake_args+=("-DCMAKE_CUDA_ARCHITECTURES=$CMAKE_CUDA_ARCHITECTURES_VALUE")
+      fi
       ;;
     cpu)
       log "Building llama.cpp with CPU backend"

@@ -110,6 +110,13 @@ Then open:
 http://127.0.0.1:8080
 ```
 
+By default, `make serve` loads a system prompt from `prompts\system_prompt.txt` if that file exists. Override it with:
+
+```powershell
+$env:SYSTEM_PROMPT_FILE="C:\path\to\your_prompt.txt"
+make serve
+```
+
 ## Test Web UI
 
 1. Run `make test`

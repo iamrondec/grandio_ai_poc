@@ -8,6 +8,7 @@ $ModelDir = if ($env:MODEL_DIR) { $env:MODEL_DIR } else { Join-Path $RootDir "mo
 $ModelRepo = if ($env:MODEL_REPO) { $env:MODEL_REPO } else { "bartowski/Qwen2.5-7B-Instruct-GGUF" }
 $ModelFile = if ($env:MODEL_FILE) { $env:MODEL_FILE } else { "Qwen2.5-7B-Instruct-Q4_K_S.gguf" }
 $LlamaBackend = if ($env:LLAMA_BACKEND) { $env:LLAMA_BACKEND.ToLowerInvariant() } else { "auto" }
+$CudaArchitectures = if ($env:CMAKE_CUDA_ARCHITECTURES) { $env:CMAKE_CUDA_ARCHITECTURES } else { $null }
 
 function Log([string]$Message) {
     Write-Host ""
@@ -70,6 +71,9 @@ try {
             }
 
             $CmakeArgs += "-DGGML_CUDA=ON"
+            if ($CudaArchitectures) {
+                $CmakeArgs += "-DCMAKE_CUDA_ARCHITECTURES=$CudaArchitectures"
+            }
             $SelectedBackend = "cuda"
         }
         "cpu" {
@@ -78,6 +82,9 @@ try {
         "auto" {
             if (Has-CudaToolkit) {
                 $CmakeArgs += "-DGGML_CUDA=ON"
+                if ($CudaArchitectures) {
+                    $CmakeArgs += "-DCMAKE_CUDA_ARCHITECTURES=$CudaArchitectures"
+                }
                 $SelectedBackend = "cuda"
             }
         }
