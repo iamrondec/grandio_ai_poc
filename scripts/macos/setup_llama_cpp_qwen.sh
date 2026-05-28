@@ -20,6 +20,21 @@ require_cmd() {
   fi
 }
 
+find_hf_cli() {
+  if [[ -x "$VENV_DIR/bin/hf" ]]; then
+    printf '%s\n' "$VENV_DIR/bin/hf"
+    return
+  fi
+
+  if [[ -x "$VENV_DIR/bin/huggingface-cli" ]]; then
+    printf '%s\n' "$VENV_DIR/bin/huggingface-cli"
+    return
+  fi
+
+  printf 'Missing Hugging Face CLI in %s/bin. Expected hf.\n' "$VENV_DIR" >&2
+  exit 1
+}
+
 build_llama_cpp() {
   cd "$LLAMA_CPP_DIR"
   log "Building llama.cpp with Metal enabled"
@@ -36,7 +51,7 @@ download_model() {
   fi
 
   log "Downloading model $MODEL_REPO :: $MODEL_FILE"
-  "$VENV_DIR/bin/huggingface-cli" download \
+  "$(find_hf_cli)" download \
     "$MODEL_REPO" \
     --include "$MODEL_FILE" \
     --local-dir "$MODEL_DIR"

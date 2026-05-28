@@ -45,7 +45,8 @@ if (-not (Test-Path $VenvDir)) {
 
 $VenvPython = Join-Path $VenvDir "Scripts\python.exe"
 $VenvPip = Join-Path $VenvDir "Scripts\pip.exe"
-$HfCli = Join-Path $VenvDir "Scripts\huggingface-cli.exe"
+$HfCli = Join-Path $VenvDir "Scripts\hf.exe"
+$LegacyHfCli = Join-Path $VenvDir "Scripts\huggingface-cli.exe"
 
 Log "Installing Python dependencies"
 & $VenvPython -m pip install --upgrade pip
@@ -56,6 +57,14 @@ if (-not (Test-Path (Join-Path $LlamaCppDir ".git"))) {
     git clone https://github.com/ggml-org/llama.cpp $LlamaCppDir
 } else {
     Log "Using existing llama.cpp checkout at $LlamaCppDir"
+}
+
+$ResolvedHfCli = if (Test-Path $HfCli) {
+    $HfCli
+} elseif (Test-Path $LegacyHfCli) {
+    $LegacyHfCli
+} else {
+    throw "Missing Hugging Face CLI in $VenvDir\Scripts. Expected hf.exe."
 }
 
 Push-Location $LlamaCppDir
@@ -103,7 +112,7 @@ try {
 $ModelPath = Join-Path $ModelDir $ModelFile
 if (-not (Test-Path $ModelPath)) {
     Log "Downloading model $ModelRepo :: $ModelFile"
-    & $HfCli download $ModelRepo --include $ModelFile --local-dir $ModelDir
+    & $ResolvedHfCli download $ModelRepo --include $ModelFile --local-dir $ModelDir
 } else {
     Log "Model already present at $ModelPath"
 }

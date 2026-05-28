@@ -19,8 +19,8 @@ fail() {
 printf '[test] Checking virtualenv...\n'
 [[ -x "$VENV_DIR/bin/python" ]] || fail "Missing virtualenv Python at $VENV_DIR/bin/python"
 
-printf '[test] Checking huggingface-cli...\n'
-[[ -x "$VENV_DIR/bin/huggingface-cli" ]] || fail "Missing huggingface-cli in $VENV_DIR/bin"
+printf '[test] Checking Hugging Face CLI...\n'
+[[ -x "$VENV_DIR/bin/hf" || -x "$VENV_DIR/bin/huggingface-cli" ]] || fail "Missing Hugging Face CLI in $VENV_DIR/bin"
 
 printf '[test] Checking llama.cpp build...\n'
 [[ -x "$LLAMA_CLI" ]] || fail "Missing llama-cli at $LLAMA_CLI"

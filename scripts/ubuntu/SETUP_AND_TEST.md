@@ -90,7 +90,7 @@ Or directly:
 The script will:
 
 1. Create `.venv` if needed
-2. Install `huggingface_hub[cli]`
+2. Install `huggingface_hub[cli]` so the `hf` CLI is available
 3. Clone `llama.cpp` into `vendor/llama.cpp`
 4. Build `llama.cpp` with CUDA when available or requested
 5. Download the default Qwen GGUF model into `models/`

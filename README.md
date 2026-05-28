@@ -5,7 +5,7 @@ This project sets up a local `llama.cpp` environment, downloads a Qwen 7B GGUF m
 ## What it does
 
 - Creates a Python virtual environment in `.venv`
-- Installs `huggingface_hub[cli]` for model downloads
+- Installs `huggingface_hub[cli]` for model downloads via `hf`
 - Clones and builds `llama.cpp`
 - Downloads a default Qwen 7B GGUF model
 - Runs Qwen in terminal mode or local web server mode
