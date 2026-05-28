@@ -29,6 +29,37 @@ That installs the base packages needed for a CPU build:
 - `python3-pip`
 - `python3-venv`
 
+## Install NVIDIA driver and CUDA
+
+If you want to use the RTX 5050 instead of CPU-only mode, install both:
+
+- An NVIDIA driver so the OS can use the GPU
+- The CUDA toolkit so `llama.cpp` can be built with CUDA support
+
+Typical Ubuntu Server flow:
+
+```bash
+sudo ubuntu-drivers autoinstall
+sudo reboot
+```
+
+After reboot, confirm the driver is active:
+
+```bash
+nvidia-smi
+```
+
+Then install the CUDA toolkit using NVIDIA's official Ubuntu package for your server's Ubuntu release. After that, confirm:
+
+```bash
+nvcc --version
+```
+
+You need both commands to work for this repo's GPU setup:
+
+- `nvidia-smi` proves the driver is installed
+- `nvcc --version` proves the CUDA toolkit is installed
+
 For an RTX 5050 or other NVIDIA GPU, also make sure:
 
 1. `nvidia-smi` works
