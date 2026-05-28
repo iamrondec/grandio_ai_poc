@@ -179,6 +179,41 @@ curl -s http://127.0.0.1:8080/completion \
   -d '{"prompt":"Say hello in one sentence.","n_predict":32}'
 ```
 
+## Optional: Install k6
+
+If you want to load test the local `llama.cpp` server on Ubuntu, install `k6` like this:
+
+```bash
+sudo apt update
+sudo apt install -y gnupg software-properties-common
+
+curl -fsSL https://dl.k6.io/key.gpg | \
+  sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] \
+https://dl.k6.io/deb stable main" | \
+  sudo tee /etc/apt/sources.list.d/k6.list
+
+sudo apt update
+sudo apt install -y k6
+```
+
+Verify the install:
+
+```bash
+k6 version
+```
+
+Example load test script:
+
+[k6_chat_completions.js](/Users/admin/grandio/grandio_ai_poc/scripts/ubuntu/k6_chat_completions.js:1)
+
+Run it against the local server with:
+
+```bash
+k6 run ./scripts/ubuntu/k6_chat_completions.js
+```
+
 ## Defaults
 
 - `MODEL_REPO=bartowski/Qwen2.5-7B-Instruct-GGUF`

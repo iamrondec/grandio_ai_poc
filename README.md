@@ -46,6 +46,8 @@ On Windows, `make setup`, `make test`, and `make run` auto-select the PowerShell
 
 On newer `llama.cpp` builds, `make serve` will also load a default system prompt from `prompts/system_prompt.txt` when that file exists. You can override it with `SYSTEM_PROMPT_FILE=/path/to/file`.
 
+For Ubuntu load testing, [scripts/ubuntu/SETUP_AND_TEST.md](/Users/admin/grandio/grandio_ai_poc/scripts/ubuntu/SETUP_AND_TEST.md) also includes optional `k6` installation steps.
+
 ## Default model
 
 The setup script defaults to:
@@ -77,6 +79,7 @@ make setup
     ├── ubuntu/
     │   ├── SETUP_AND_TEST.md
     │   ├── install_requirements.sh
+    │   ├── k6_chat_completions.js
     │   ├── run_qwen.sh
     │   ├── run_qwen_server.sh
     │   ├── setup_llama_cpp_qwen.sh
