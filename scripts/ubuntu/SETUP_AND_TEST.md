@@ -227,6 +227,26 @@ THREADS=8 CONTEXT_SIZE=8192 N_GPU_LAYERS=99 make run
 HOST=0.0.0.0 PORT=8081 make serve
 ```
 
+## Qwen 14B Helpers
+
+Use the dedicated 14B wrappers when you want `Qwen2.5-14B-Instruct-Q4_K_M.gguf` without changing the default 7B scripts:
+
+```bash
+./scripts/ubuntu/setup_qwen14b.sh
+./scripts/ubuntu/run_qwen14b.sh
+./scripts/ubuntu/run_qwen14b_server.sh
+./scripts/ubuntu/test_qwen14b_install.sh
+```
+
+Or with `make`:
+
+```bash
+make setup-ubuntu-qwen14b
+make run-ubuntu-qwen14b
+make serve-ubuntu-qwen14b
+make test-ubuntu-qwen14b
+```
+
 For an NVIDIA GPU:
 
 ```bash

@@ -12,7 +12,7 @@ $(error Unsupported platform: $(UNAME_S))
 endif
 endif
 
-.PHONY: help setup test run serve setup-macos test-macos run-macos serve-macos install-ubuntu-requirements setup-ubuntu test-ubuntu run-ubuntu serve-ubuntu install-windows-requirements setup-windows test-windows run-windows serve-windows clean
+.PHONY: help setup test run serve setup-macos test-macos run-macos serve-macos install-ubuntu-requirements setup-ubuntu test-ubuntu run-ubuntu serve-ubuntu setup-ubuntu-qwen14b test-ubuntu-qwen14b run-ubuntu-qwen14b serve-ubuntu-qwen14b install-windows-requirements setup-windows test-windows run-windows serve-windows clean
 
 help:
 	@echo Available targets:
@@ -29,6 +29,10 @@ help:
 	@echo   make test-ubuntu
 	@echo   make run-ubuntu
 	@echo   make serve-ubuntu
+	@echo   make setup-ubuntu-qwen14b
+	@echo   make test-ubuntu-qwen14b
+	@echo   make run-ubuntu-qwen14b
+	@echo   make serve-ubuntu-qwen14b
 	@echo   make install-windows-requirements
 	@echo   make setup-windows
 	@echo   make test-windows
@@ -74,6 +78,18 @@ run-ubuntu:
 
 serve-ubuntu:
 	./scripts/ubuntu/run_qwen_server.sh
+
+setup-ubuntu-qwen14b:
+	./scripts/ubuntu/setup_qwen14b.sh
+
+test-ubuntu-qwen14b:
+	./scripts/ubuntu/test_qwen14b_install.sh
+
+run-ubuntu-qwen14b:
+	./scripts/ubuntu/run_qwen14b.sh
+
+serve-ubuntu-qwen14b:
+	./scripts/ubuntu/run_qwen14b_server.sh
 
 install-windows-requirements:
 	powershell -ExecutionPolicy Bypass -File .\scripts\windows\install_requirements.ps1

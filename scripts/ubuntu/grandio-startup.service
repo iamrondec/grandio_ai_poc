@@ -1,0 +1,15 @@
+[Unit]
+Description=Grandio AI server startup
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=admin
+WorkingDirectory=/Users/admin/grandio/grandio_ai_poc
+ExecStart=/Users/admin/grandio/grandio_ai_poc/start_server.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
