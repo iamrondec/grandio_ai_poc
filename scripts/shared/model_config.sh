@@ -90,8 +90,9 @@ resolve_model_preset() {
       ;;
     qwen3-8b|qwen3)
       MODEL_LABEL="Qwen3 8B"
-      MODEL_REPO="bartowski/Qwen3-8B-GGUF"
-      MODEL_GGUF_GLOB="Qwen3-8B-*Q4_K_M.gguf"
+      MODEL_REPO="Qwen/Qwen3-8B-GGUF"
+      MODEL_FILE="Qwen3-8B-Q4_K_M.gguf"
+      MODEL_GGUF_GLOB=""
       ;;
     deepseek-r1-distill-qwen-14b|deepseek-r1-14b|deepseek-14b)
       MODEL_LABEL="DeepSeek R1 Distill Qwen 14B"
@@ -100,8 +101,9 @@ resolve_model_preset() {
       ;;
     gemma3-12b|gemma-3-12b|gemma3)
       MODEL_LABEL="Gemma 3 12B IT"
-      MODEL_REPO="bartowski/Gemma-3-12B-IT-GGUF"
-      MODEL_GGUF_GLOB="Gemma-3-12B-IT-*Q4_K_M.gguf"
+      MODEL_REPO="mradermacher/gemma-3-12b-it-qat-q4_0-unquantized-GGUF"
+      MODEL_FILE="gemma-3-12b-it-qat-q4_0-unquantized.Q4_K_M.gguf"
+      MODEL_GGUF_GLOB=""
       ;;
     *)
       printf 'Unknown MODEL_PRESET: %s\n' "$MODEL_PRESET" >&2
@@ -188,7 +190,11 @@ ensure_selected_model() {
   download_selected_model
 
   if [[ -z "$MODEL_PATH" || ! -f "$MODEL_PATH" ]]; then
-    printf 'Model file is still missing after download. Check MODEL_REPO / MODEL_FILE / MODEL_GGUF_GLOB.\n' >&2
+    printf 'Model file is still missing after download.\n' >&2
+    printf 'MODEL_REPO=%s\n' "$MODEL_REPO" >&2
+    printf 'MODEL_FILE=%s\n' "${MODEL_FILE:-<unset>}" >&2
+    printf 'MODEL_GGUF_GLOB=%s\n' "${MODEL_GGUF_GLOB:-<unset>}" >&2
+    printf 'The Hugging Face repo may be wrong, gated, or require `hf auth login`.\n' >&2
     exit 1
   fi
 }
