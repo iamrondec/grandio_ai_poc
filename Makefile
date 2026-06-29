@@ -12,7 +12,7 @@ $(error Unsupported platform: $(UNAME_S))
 endif
 endif
 
-.PHONY: help setup test run serve setup-macos test-macos run-macos serve-macos install-ubuntu-requirements setup-ubuntu test-ubuntu run-ubuntu serve-ubuntu setup-ubuntu-qwen14b test-ubuntu-qwen14b run-ubuntu-qwen14b serve-ubuntu-qwen14b install-windows-requirements setup-windows test-windows run-windows serve-windows clean
+.PHONY: help setup test run serve install-autostart install-autostart-ubuntu setup-macos test-macos run-macos serve-macos install-ubuntu-requirements setup-ubuntu test-ubuntu run-ubuntu serve-ubuntu setup-ubuntu-qwen14b test-ubuntu-qwen14b run-ubuntu-qwen14b serve-ubuntu-qwen14b install-windows-requirements setup-windows test-windows run-windows serve-windows clean
 
 help:
 	@echo Available targets:
@@ -20,6 +20,8 @@ help:
 	@echo   make test                        # auto-detects macOS, Ubuntu, or Windows
 	@echo   make run                         # auto-detects macOS, Ubuntu, or Windows
 	@echo   make serve                       # auto-detects macOS, Ubuntu, or Windows
+	@echo   make install-autostart           # auto-detects platform, currently Ubuntu/Linux systemd
+	@echo   make install-autostart-ubuntu
 	@echo   make setup-macos
 	@echo   make test-macos
 	@echo   make run-macos
@@ -51,6 +53,12 @@ run:
 
 serve:
 	$(MAKE) serve-$(PLATFORM)
+
+install-autostart:
+	./install_autostart.sh
+
+install-autostart-ubuntu:
+	./scripts/ubuntu/install_startup_service.sh
 
 setup-macos:
 	./scripts/macos/setup_llama_cpp_qwen.sh

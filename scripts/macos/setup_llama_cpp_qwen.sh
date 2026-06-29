@@ -5,9 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 VENV_DIR="${VENV_DIR:-$ROOT_DIR/.venv}"
 VENDOR_DIR="$ROOT_DIR/vendor"
 LLAMA_CPP_DIR="${LLAMA_CPP_DIR:-$VENDOR_DIR/llama.cpp}"
-MODEL_DIR="${MODEL_DIR:-$ROOT_DIR/models}"
-MODEL_REPO="${MODEL_REPO:-bartowski/Qwen2.5-7B-Instruct-GGUF}"
-MODEL_FILE="${MODEL_FILE:-Qwen2.5-7B-Instruct-Q4_K_S.gguf}"
+source "$ROOT_DIR/scripts/shared/model_config.sh"
 
 log() {
   printf '\n[%s] %s\n' "setup" "$1"
@@ -20,21 +18,6 @@ require_cmd() {
   fi
 }
 
-find_hf_cli() {
-  if [[ -x "$VENV_DIR/bin/hf" ]]; then
-    printf '%s\n' "$VENV_DIR/bin/hf"
-    return
-  fi
-
-  if [[ -x "$VENV_DIR/bin/huggingface-cli" ]]; then
-    printf '%s\n' "$VENV_DIR/bin/huggingface-cli"
-    return
-  fi
-
-  printf 'Missing Hugging Face CLI in %s/bin. Expected hf.\n' "$VENV_DIR" >&2
-  exit 1
-}
-
 build_llama_cpp() {
   cd "$LLAMA_CPP_DIR"
   log "Building llama.cpp with Metal enabled"
@@ -42,25 +25,12 @@ build_llama_cpp() {
   cmake --build build --config Release -j
 }
 
-download_model() {
-  mkdir -p "$MODEL_DIR"
-
-  if [[ -f "$MODEL_DIR/$MODEL_FILE" ]]; then
-    log "Model already present at $MODEL_DIR/$MODEL_FILE"
-    return
-  fi
-
-  log "Downloading model $MODEL_REPO :: $MODEL_FILE"
-  "$(find_hf_cli)" download \
-    "$MODEL_REPO" \
-    --include "$MODEL_FILE" \
-    --local-dir "$MODEL_DIR"
-}
-
 main() {
   require_cmd git
   require_cmd python3
   require_cmd cmake
+
+  resolve_model_config
 
   mkdir -p "$VENDOR_DIR" "$MODEL_DIR"
 
@@ -83,10 +53,11 @@ main() {
   fi
 
   build_llama_cpp
-  download_model
+  download_selected_model
 
   log "Setup complete"
-  printf 'Model path: %s\n' "$MODEL_DIR/$MODEL_FILE"
+  printf 'Selected model: %s\n' "$MODEL_LABEL"
+  printf 'Model path: %s\n' "$MODEL_PATH"
   printf 'Run with: %s\n' "$ROOT_DIR/scripts/macos/run_qwen.sh"
 }
 

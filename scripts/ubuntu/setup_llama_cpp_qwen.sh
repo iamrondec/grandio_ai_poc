@@ -5,9 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 VENV_DIR="${VENV_DIR:-$ROOT_DIR/.venv}"
 VENDOR_DIR="$ROOT_DIR/vendor"
 LLAMA_CPP_DIR="${LLAMA_CPP_DIR:-$VENDOR_DIR/llama.cpp}"
-MODEL_DIR="${MODEL_DIR:-$ROOT_DIR/models}"
-MODEL_REPO="${MODEL_REPO:-bartowski/Qwen2.5-7B-Instruct-GGUF}"
-MODEL_FILE="${MODEL_FILE:-Qwen2.5-7B-Instruct-Q4_K_S.gguf}"
+source "$ROOT_DIR/scripts/shared/model_config.sh"
 LLAMA_BACKEND="${LLAMA_BACKEND:-auto}"
 CMAKE_CUDA_ARCHITECTURES_VALUE="${CMAKE_CUDA_ARCHITECTURES:-}"
 
@@ -20,21 +18,6 @@ require_cmd() {
     printf 'Missing required command: %s\n' "$1" >&2
     exit 1
   fi
-}
-
-find_hf_cli() {
-  if [[ -x "$VENV_DIR/bin/hf" ]]; then
-    printf '%s\n' "$VENV_DIR/bin/hf"
-    return
-  fi
-
-  if [[ -x "$VENV_DIR/bin/huggingface-cli" ]]; then
-    printf '%s\n' "$VENV_DIR/bin/huggingface-cli"
-    return
-  fi
-
-  printf 'Missing Hugging Face CLI in %s/bin. Expected hf.\n' "$VENV_DIR" >&2
-  exit 1
 }
 
 has_cuda_toolkit() {
@@ -66,21 +49,6 @@ build_llama_cpp() {
 
   cmake "${cmake_args[@]}"
   cmake --build build --config Release -j
-}
-
-download_model() {
-  mkdir -p "$MODEL_DIR"
-
-  if [[ -f "$MODEL_DIR/$MODEL_FILE" ]]; then
-    log "Model already present at $MODEL_DIR/$MODEL_FILE"
-    return
-  fi
-
-  log "Downloading model $MODEL_REPO :: $MODEL_FILE"
-  "$(find_hf_cli)" download \
-    "$MODEL_REPO" \
-    --include "$MODEL_FILE" \
-    --local-dir "$MODEL_DIR"
 }
 
 select_backend() {
@@ -115,6 +83,7 @@ main() {
   require_cmd git
   require_cmd python3
   require_cmd cmake
+  resolve_model_config
 
   mkdir -p "$VENDOR_DIR" "$MODEL_DIR"
 
@@ -140,10 +109,11 @@ main() {
   log "Selected backend: $selected_backend"
 
   build_llama_cpp "$selected_backend"
-  download_model
+  download_selected_model
 
   log "Setup complete"
-  printf 'Model path: %s\n' "$MODEL_DIR/$MODEL_FILE"
+  printf 'Selected model: %s\n' "$MODEL_LABEL"
+  printf 'Model path: %s\n' "$MODEL_PATH"
   printf 'Run with: %s\n' "$ROOT_DIR/scripts/ubuntu/run_qwen.sh"
 }
 

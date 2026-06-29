@@ -7,6 +7,7 @@ Wants=network-online.target
 Type=simple
 User=admin
 WorkingDirectory=/Users/admin/grandio/grandio_ai_poc
+Environment=MODEL_PRESET=qwen2.5-7b
 ExecStart=/Users/admin/grandio/grandio_ai_poc/start_server.sh
 Restart=always
 RestartSec=5
